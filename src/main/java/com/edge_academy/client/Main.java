@@ -1,7 +1,9 @@
 package com.edge_academy.client;
 
-import com.edge_academy.AesKey;
 import com.edge_academy.client.http.ApiConnections;
+import com.edge_academy.compression.Compressor;
+import com.edge_academy.compression.Decompressor;
+import com.edge_academy.cryptography.Decrypt;
 import com.edge_academy.cryptography.Encrypt;
 
 import static com.edge_academy.AesKey.AES_KEY;
@@ -23,7 +25,20 @@ public class Main {
         String encryptedJson = Encrypt.encryptString(json, AES_KEY);
 
         System.out.println(encryptedJson);
+        Compressor compressor = new Compressor(encryptedJson.getBytes());
+        byte[] compressedJson = compressor.compress();
 
+        //System.out.println(new String(compressedJson));
+        System.out.println(encryptedJson.getBytes().length);
+        System.out.println(compressedJson.length);
+
+        Decompressor decompressor = new Decompressor(compressedJson);
+        byte[] decompressedJson = decompressor.decompress();
+        String stringDecompressedJson = new String(decompressedJson);
+        System.out.println(stringDecompressedJson);
+
+        String decryptedJson = Decrypt.decryptString(stringDecompressedJson, AES_KEY);
+        System.out.println(decryptedJson);
 
     }
 }
