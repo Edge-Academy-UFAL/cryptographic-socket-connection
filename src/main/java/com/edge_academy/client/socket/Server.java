@@ -26,37 +26,21 @@ public class Server {
         this.serverPort = serverPort;
     }
 
-    private Socket connectClient() throws IOException {
-        try (ServerSocket serverSocket = new ServerSocket(serverPort)) {
-            System.out.println("Waiting connections in port " + serverPort);
 
-            Socket clientSocket = serverSocket.accept();
-            System.out.println("Client connected: " + clientSocket.getInetAddress().getHostAddress());
-
-            return clientSocket;
-        }
-    }
-
-
-    public byte[] receiveData() throws IOException {
-        Socket clientSocket = null;
-
-        while (true) {
-            try {
-                clientSocket = connectClient();
-                if (clientSocket != null) {
-                    InputStream inputStream = clientSocket.getInputStream();
-
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                    return reader.readLine().getBytes();
-                }
-
-                // Aguarde algum tempo antes de tentar novamente
-                Thread.sleep(1000); // Pausa de 1 segundo (você pode ajustar o tempo de espera)
-            } catch (Exception e) {
-                e.printStackTrace();
+    public String receiveData() {
+        try (
+                ServerSocket serverSocket = new ServerSocket(serverPort);
+                Socket clientSocket = serverSocket.accept();
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        ) {
+            StringBuilder receivedData = new StringBuilder();
+            String line;
+            while ((line = in.readLine()) != null) {
+                receivedData.append(line);
             }
+            return receivedData.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.edge_academy.client;
 
 import com.edge_academy.client.http.ApiConnections;
-import com.edge_academy.client.socket.Stream;
+import com.edge_academy.client.socket.Client;
 import com.edge_academy.compression.Compressor;
 import com.edge_academy.compression.Decompressor;
 import com.edge_academy.cryptography.Decrypt;
@@ -43,12 +43,13 @@ public class Main {
         String decryptedJson = Decrypt.decryptString(stringDecompressedJson, AES_KEY);
         //System.out.println(decryptedJson);
 
-        Stream socketStream = new Stream();
+        Client socketClient = new Client();
         while (true) {
             try {
-                socketStream.sendData(compressedJson);
-            } catch (IOException e) {
-                e.printStackTrace();
+                socketClient.sendData(compressedJson);
+                break;
+            } catch (RuntimeException ignored) {
+
             }
         }
 
