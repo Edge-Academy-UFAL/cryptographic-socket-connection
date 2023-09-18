@@ -28,11 +28,11 @@ public class ApiConnections {
      * @throws HttpRequestException Se ocorrer um erro ao fazer a solicitação HTTP.
      * @throws IOException          Se ocorrer um erro de E/S durante a solicitação.
      */
-    public String requestJson() throws HttpRequestException, IOException {
+    public String requestJson(String endPoint) throws HttpRequestException, IOException {
         HttpURLConnection connection = null;
 
         try {
-            URL url = new URL(apiUrl);
+            URL url = new URL(apiUrl + endPoint);
 
             connection = (HttpURLConnection) url.openConnection();
 

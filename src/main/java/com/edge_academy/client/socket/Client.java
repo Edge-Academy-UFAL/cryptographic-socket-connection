@@ -1,15 +1,19 @@
 package com.edge_academy.client.socket;
 
-import java.io.DataOutputStream;
+import com.sun.security.jgss.GSSUtil;
+
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class Client {
     static private final int DEFAULT_PORT = 1969;
 
     private final String serverHost;
     private final int serverPort;
+
+    private Socket server;
 
     public Client() {
         this.serverHost = "localhost";
@@ -26,14 +30,30 @@ public class Client {
         this.serverPort = serverPort;
     }
 
-    public void sendData(byte[] data) {
-        try (
-                Socket echoSocket = new Socket(serverHost, serverPort);
-                DataOutputStream outputStream = new DataOutputStream(echoSocket.getOutputStream());
-        ) {
-            outputStream.write(data);
+    public void init() throws IOException {
+        try {
+            server = new Socket(serverHost, serverPort);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ConnectException("Não foi possível iniciar conexão com o servidor");
         }
     }
+
+    public void sendData(byte[] data) {
+        try {
+            OutputStream outputStream = server.getOutputStream();
+            outputStream.write(data);
+        } catch (IOException e) {
+            System.out.println("Erro ao enviar os dados");
+        }
+    }
+
+    public void close() {
+        try {
+            server.close();
+        } catch (IOException e) {
+            System.out.println("Não foi possível encerrar conexão com o servidor");
+        }
+    }
+
+
 }
